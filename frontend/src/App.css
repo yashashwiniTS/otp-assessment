@@ -1,0 +1,128 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f6f8;
+}
+
+.registration-card {
+  width: 420px;
+  padding: 35px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.registration-card h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.registration-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.registration-card label {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.registration-card input,
+.registration-card textarea {
+  padding: 12px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.registration-card textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.registration-card button {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #222;
+  color: white;
+}
+
+.success {
+  margin-top: 15px;
+  padding: 12px;
+  text-align: center;
+  background: #eaf8ee;
+  border-radius: 8px;
+}
+
+/* OTP MODAL */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otp-modal {
+  width: 380px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.otp-modal h2 {
+  margin-top: 0;
+}
+
+.otp-modal input {
+  width: 100%;
+  padding: 12px;
+  margin: 20px 0 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+.otp-modal button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #222;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.otp-modal .skip-button {
+  background: #777;
+}
