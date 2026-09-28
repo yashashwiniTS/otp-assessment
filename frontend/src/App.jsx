@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 
+const API_URL = "https://otp-assessment.onrender.com";
+
 function App() {
   const [formData, setFormData] = useState({
     email: "",
@@ -37,7 +39,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/check-user?email=${encodeURIComponent(email)}`
+        `${API_URL}/check-user?email=${encodeURIComponent(email)}`
       );
 
       const data = await response.json();
@@ -71,7 +73,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/verify-otp",
+        `${API_URL}/verify-otp`,
         {
           method: "POST",
           headers: {
@@ -114,7 +116,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/checkout",
+        `${API_URL}/checkout`,
         {
           method: "POST",
           headers: {
