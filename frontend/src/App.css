@@ -5,19 +5,24 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background: #f4f6f8;
 }
 
 .page {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f4f6f8;
+  padding: 40px 20px;
+}
+
+.main-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .registration-card {
-  width: 420px;
+  width: 100%;
   padding: 35px;
+  margin-bottom: 30px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -25,6 +30,7 @@ body {
 
 .registration-card h1 {
   text-align: center;
+  margin-top: 0;
   margin-bottom: 10px;
 }
 
@@ -68,12 +74,53 @@ body {
   color: white;
 }
 
+.registration-card button:hover {
+  background: #444;
+}
+
 .success {
   margin-top: 15px;
   padding: 12px;
   text-align: center;
   background: #eaf8ee;
+  color: #176b35;
   border-radius: 8px;
+}
+
+.error {
+  margin-top: 15px;
+  padding: 12px;
+  text-align: center;
+  background: #fdeaea;
+  color: #b42318;
+  border-radius: 8px;
+}
+
+.error-text {
+  margin-top: -10px;
+  margin-bottom: 18px;
+  color: #b42318;
+  font-size: 14px;
+}
+
+.otp-display {
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  background: #f0f4ff;
+  border: 2px solid #d7e0ff;
+  border-radius: 10px;
+}
+
+.otp-display p {
+  margin: 5px 0;
+}
+
+.otp-display strong {
+  display: block;
+  margin: 10px 0;
+  font-size: 32px;
+  letter-spacing: 6px;
 }
 
 /* OTP MODAL */
@@ -85,10 +132,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 .otp-modal {
   width: 380px;
+  max-width: 100%;
   padding: 30px;
   background: white;
   border-radius: 12px;
@@ -123,6 +172,14 @@ body {
   cursor: pointer;
 }
 
+.otp-modal button:hover {
+  background: #444;
+}
+
 .otp-modal .skip-button {
   background: #777;
+}
+
+.otp-modal .skip-button:hover {
+  background: #555;
 }

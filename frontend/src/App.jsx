@@ -1,9 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 const API_URL = "https://otp-assessment.onrender.com";
 
 function App() {
+  // -----------------------------
+  // REGISTRATION
+  // -----------------------------
+
+  const [registrationData, setRegistrationData] = useState({
+    email: "",
+    first_name: "",
+    last_name: "",
+  });
+
+  const [registrationMessage, setRegistrationMessage] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+
+  // -----------------------------
+  // CHECKOUT
+  // -----------------------------
+
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
@@ -15,10 +32,79 @@ function App() {
   const [userName, setUserName] = useState("");
   const [checkingEmail, setCheckingEmail] = useState(false);
 
+  // -----------------------------
+  // OTP LOGIN
+  // -----------------------------
+
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+
+  // -----------------------------
+  // EMAIL VALIDATION
+  // -----------------------------
+
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // -----------------------------
+  // REGISTRATION INPUT
+  // -----------------------------
+
+  const handleRegistrationChange = (event) => {
+    setRegistrationData({
+      ...registrationData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // -----------------------------
+  // REGISTER USER
+  // -----------------------------
+
+  const handleRegistration = async (event) => {
+    event.preventDefault();
+
+    setRegistrationMessage("");
+    setGeneratedOtp("");
+
+    try {
+      const response = await fetch(`${API_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registrationData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setRegistrationMessage(
+          data.detail || "Registration failed."
+        );
+        return;
+      }
+
+      setGeneratedOtp(data.otp);
+
+      setRegistrationMessage(
+        "Registration successful! Your OTP is shown below."
+      );
+    } catch (error) {
+      console.error("Registration failed:", error);
+
+      setRegistrationMessage(
+        "Could not connect to the server."
+      );
+    }
+  };
+
+  // -----------------------------
+  // CHECKOUT INPUT
+  // -----------------------------
 
   const handleChange = (event) => {
     setFormData({
@@ -27,11 +113,16 @@ function App() {
     });
   };
 
+  // -----------------------------
+  // CHECK IF EMAIL IS REGISTERED
+  // -----------------------------
+
   const checkUser = async (email) => {
-    if (!email) {
+    if (!isValidEmail(email)) {
       setUserFound(false);
       setUserName("");
       setShowOtpModal(false);
+      setCheckingEmail(false);
       return;
     }
 
@@ -55,6 +146,7 @@ function App() {
       }
     } catch (error) {
       console.error("Email recognition failed:", error);
+
       setUserFound(false);
       setUserName("");
       setShowOtpModal(false);
@@ -62,6 +154,33 @@ function App() {
       setCheckingEmail(false);
     }
   };
+
+  // -----------------------------
+  // REAL-TIME EMAIL RECOGNITION
+  // -----------------------------
+
+  useEffect(() => {
+    const email = formData.email.trim();
+
+    setUserFound(false);
+    setUserName("");
+
+    if (!email || !isValidEmail(email)) {
+      setShowOtpModal(false);
+      setCheckingEmail(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      checkUser(email);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [formData.email]);
+
+  // -----------------------------
+  // VERIFY OTP
+  // -----------------------------
 
   const verifyOtp = async () => {
     setOtpError("");
@@ -99,15 +218,26 @@ function App() {
       setOtp("");
     } catch (error) {
       console.error("OTP verification failed:", error);
-      setOtpError("Could not connect to the server.");
+
+      setOtpError(
+        "Could not connect to the server."
+      );
     }
   };
+
+  // -----------------------------
+  // SKIP OTP
+  // -----------------------------
 
   const handleSkip = () => {
     setShowOtpModal(false);
     setOtp("");
     setOtpError("");
   };
+
+  // -----------------------------
+  // CHECKOUT SUBMIT
+  // -----------------------------
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -129,91 +259,203 @@ function App() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || "Checkout failed");
+        throw new Error(
+          data.detail || "Checkout failed"
+        );
       }
 
-      setMessage("Checkout information saved successfully.");
+      setMessage(
+        "Checkout information saved successfully."
+      );
     } catch (error) {
       setMessage(error.message);
     }
   };
 
+  // -----------------------------
+  // PAGE
+  // -----------------------------
+
   return (
     <div className="page">
-      <div className="registration-card">
-        <h1>Checkout</h1>
 
-        <p className="subtitle">
-          Enter your details to continue.
-        </p>
+      <div className="main-container">
 
-        {loggedIn && (
-          <div className="success">
-            Welcome, {userName}!
-          </div>
-        )}
+        {/* REGISTRATION SECTION */}
 
-        <form onSubmit={handleSubmit}>
-          <label>Email</label>
+        <div className="registration-card">
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(event) => {
-              handleChange(event);
-              checkUser(event.target.value);
-            }}
-            required
-          />
+          <h1>OTP Login / Registration</h1>
 
-          {checkingEmail && (
-            <p>Checking email...</p>
+          <p className="subtitle">
+            Register your account using your email.
+          </p>
+
+          <form onSubmit={handleRegistration}>
+
+            <label>Email</label>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={registrationData.email}
+              onChange={handleRegistrationChange}
+              required
+            />
+
+            <label>First Name</label>
+
+            <input
+              type="text"
+              name="first_name"
+              placeholder="Enter your first name"
+              value={registrationData.first_name}
+              onChange={handleRegistrationChange}
+              required
+            />
+
+            <label>Last Name</label>
+
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Enter your last name"
+              value={registrationData.last_name}
+              onChange={handleRegistrationChange}
+              required
+            />
+
+            <button type="submit">
+              Register
+            </button>
+
+          </form>
+
+          {registrationMessage && (
+            <div
+              className={
+                generatedOtp
+                  ? "success"
+                  : "error"
+              }
+            >
+              {registrationMessage}
+            </div>
           )}
 
-          {userFound && !loggedIn && (
-            <p className="success">
-              Registered user detected: {userName}
-            </p>
+          {generatedOtp && (
+            <div className="otp-display">
+
+              <p>Your 6-digit OTP is:</p>
+
+              <strong>
+                {generatedOtp}
+              </strong>
+
+              <p>
+                Keep this code for login.
+              </p>
+
+            </div>
           )}
 
-          <label>Phone</label>
+        </div>
 
-          <input
-            type="text"
-            name="phone"
-            placeholder="Enter your phone number"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
 
-          <label>Shipping Address</label>
+        {/* CHECKOUT SECTION */}
 
-          <textarea
-            name="shipping_address"
-            placeholder="Enter your shipping address"
-            value={formData.shipping_address}
-            onChange={handleChange}
-            required
-          />
+        <div className="registration-card">
 
-          <button type="submit">
-            Continue to Checkout
-          </button>
-        </form>
+          <h1>Checkout</h1>
 
-        {message && (
-          <div className="success">
-            {message}
-          </div>
-        )}
+          <p className="subtitle">
+            Enter your details to continue.
+          </p>
+
+          {loggedIn && (
+            <div className="success">
+              Welcome, {userName}!
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+
+            <label>Email</label>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+
+            {formData.email &&
+              !isValidEmail(formData.email) && (
+                <p className="error-text">
+                  Please enter a valid email address.
+                </p>
+              )}
+
+            {checkingEmail && (
+              <p>
+                Checking email...
+              </p>
+            )}
+
+            {userFound && !loggedIn && (
+              <p className="success">
+                Registered user detected: {userName}
+              </p>
+            )}
+
+            <label>Phone</label>
+
+            <input
+              type="text"
+              name="phone"
+              placeholder="Enter your phone number"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+
+            <label>Shipping Address</label>
+
+            <textarea
+              name="shipping_address"
+              placeholder="Enter your shipping address"
+              value={formData.shipping_address}
+              onChange={handleChange}
+              required
+            />
+
+            <button type="submit">
+              Continue to Checkout
+            </button>
+
+          </form>
+
+          {message && (
+            <div className="success">
+              {message}
+            </div>
+          )}
+
+        </div>
+
       </div>
+
+
+      {/* OTP MODAL */}
 
       {showOtpModal && (
         <div className="modal-overlay">
+
           <div className="otp-modal">
+
             <h2>Welcome back!</h2>
 
             <p>
@@ -258,9 +500,12 @@ function App() {
             >
               Skip
             </button>
+
           </div>
+
         </div>
       )}
+
     </div>
   );
 }
