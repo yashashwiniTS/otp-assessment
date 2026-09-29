@@ -31,14 +31,16 @@ body {
 .registration-card h1 {
   text-align: center;
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .subtitle {
   text-align: center;
   color: #666;
-  margin-bottom: 25px;
+  margin-top: 0;
+  margin-bottom: 30px;
 }
+
 
 .registration-card form {
   display: flex;
